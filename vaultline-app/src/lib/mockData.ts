@@ -27,7 +27,7 @@ export const mockFindings: Finding[] = [
   {
     id: "finding_2",
     scanId: "scan_1",
-    tool: "npm-audit",
+    tool: "npm_audit",
     severity: "high",
     title: "Vulnerable dependency: lodash",
     description: "Installed lodash version has a known prototype pollution vulnerability.",
