@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Tool {
+  gitleaks
+  semgrep
+  trivy
+  npm_audit
+  pip_audit
+}
+
+enum Severity {
+  critical
+  high
+  medium
+  low
+}
+
+enum ScanStatus {
+  queued
+  cloning
+  scanning
+  reporting
+  completed
+  failed
+}
+
+model Repo {
+  id         String   @id @default(cuid())
+  name       String
+  fullName   String
+  private    Boolean
+  language   String?
+  lastScanId String?
+
+  scans      Scan[]
+}
+
+model Scan {
+  id            String     @id @default(cuid())
+  repoId        String
+  repo          Repo       @relation(fields: [repoId], references: [id])
+  status        ScanStatus
+  queuePosition Int?
+  startedAt     DateTime?
+  completedAt   DateTime?
+
+  findings      Finding[]
+}
+
+model Finding {
+  id           String   @id @default(cuid())
+  scanId       String
+  scan         Scan     @relation(fields: [scanId], references: [id])
+  tool         Tool
+  severity     Severity
+  title        String
+  description  String
+  filePath     String
+  lineNumber   Int?
+  commitHash   String?
+  cveId        String?
+  suggestedFix String?
+  ignored      Boolean  @default(false)
+}
