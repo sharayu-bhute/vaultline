@@ -9,7 +9,7 @@ export interface RunSandBoxedScanParams {
     scanId: string;
 }
 
-export async function runSandBoxedScan({
+export async function runSandboxedScan({
     repoDir,
     outputDir,
     scanId,

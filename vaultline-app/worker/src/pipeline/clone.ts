@@ -14,7 +14,7 @@ export interface CloneResult{
 export async function cloneRepo(params:{
     cloneUrl: string;
     scanId: string;
-    checkHistory: boolean;
+    checkHistory: Boolean;
 }) : Promise<CloneResult>{
     const workDir = process.env.WORK_DIR || "C:/vaultline-work";
     await mkdir(workDir,{ recursive: true});
