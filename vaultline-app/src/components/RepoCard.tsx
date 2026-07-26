@@ -1,5 +1,6 @@
 import { Repo, ScanStatus } from "@/types";
 import ScanStatusBadge from "./ScanStatusBadge";
+import ScanButton from "./ScanButton";
 
 interface RepoCardProps {
   repo: Repo;
@@ -20,6 +21,7 @@ export default function RepoCard({ repo, status }: RepoCardProps) {
         </p>
       </div>
       {status && <ScanStatusBadge status={status} />}
+      <ScanButton repoId={repo.id} fullName={repo.fullName} />
     </div>
   );
 }

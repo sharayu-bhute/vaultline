@@ -13,7 +13,8 @@
     "@prisma/adapter-pg": "^7.9.0",
     "@prisma/client": "^7.9.0",
     "bullmq": "^5.34.0",
-    "ioredis": "^5.4.1"
+    "ioredis": "^5.4.1",
+    "next-auth": "^5.0.0-beta.32"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -21,4 +22,3 @@
     "typescript": "^5"
   }
 }
- 

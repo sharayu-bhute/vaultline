@@ -1,21 +1,38 @@
-export default function Navbar() {
+import { auth, signOut } from "../../auth";
+
+export default async function Navbar() {
+  const session = await auth();
+
   return (
     <nav className="border-b bg-white">
       <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-        {/* Brand */}
         <div>
           <span className="font-bold text-lg text-slate-900">
             Vault<span className="text-indigo-600">line</span>
           </span>
         </div>
 
-        {/* User info (placeholder until auth is wired up) */}
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center text-sm font-medium text-slate-700">
-            S
+        {session?.user && (
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center text-sm font-medium text-slate-700 overflow-hidden">
+              {session.user.image ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={session.user.image} alt="" className="w-8 h-8" />
+              ) : (
+                session.user.name?.[0] ?? "?"
+              )}
+            </div>
+            <span className="text-sm text-slate-600">{session.user.name}</span>
+            <form
+              action={async () => {
+                "use server";
+                await signOut({ redirectTo: "/" });
+              }}
+            >
+              <button className="text-sm text-slate-500 underline">Sign out</button>
+            </form>
           </div>
-          <span className="text-sm text-slate-600">sharayu</span>
-        </div>
+        )}
       </div>
     </nav>
   );
