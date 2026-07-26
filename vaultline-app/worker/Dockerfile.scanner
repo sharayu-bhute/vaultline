@@ -1,0 +1,37 @@
+FROM python:3.12-slim AS base
+
+ARG GITLEAKS_VERSION=8.21.2
+ARG TRIVY_VERSION=0.72.0
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    git \
+    nodejs \
+    npm \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+    | tar -xz -C /usr/local/bin gitleaks
+
+ENV TRIVY_CACHE_DIR=/var/cache/trivy
+
+RUN curl -sSL "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz" \
+    | tar -xz -C /usr/local/bin trivy \
+    && mkdir -p ${TRIVY_CACHE_DIR} \
+    && trivy image --download-db-only --cache-dir ${TRIVY_CACHE_DIR}
+
+RUN pip install --no-cache-dir pip-audit
+
+
+RUN useradd -u 10001 -m scanner \
+    && chown -R scanner:scanner ${TRIVY_CACHE_DIR}
+USER scanner
+WORKDIR /repo
+
+COPY --chown=scanner:scanner docker/entrypoint.sh /scripts/entrypoint.sh
+USER root
+RUN chmod +x /scripts/entrypoint.sh
+USER scanner
+
+ENTRYPOINT ["/scripts/entrypoint.sh"]

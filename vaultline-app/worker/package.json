@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch --env-file=.env src/index.ts",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "build:image": "docker build -t vaultline-scanner:latest -f Dockerfile.scanner ."
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.0",
@@ -20,3 +21,4 @@
     "typescript": "^5"
   }
 }
+ 

@@ -10,3 +10,16 @@
     src/pipeline/normalize/*.ts (all 5 tools) + index.ts — raw JSON → Finding[]
     src/pipeline/runScan.ts — orchestrates the whole lifecycle
     src/index.ts — the actual worker process
+
+3. 26/7/26
+    worker/Dockerfile.scanner + worker/docker/entrypoint.sh — built the vaultline-scanner image (gitleaks, trivy, npm audit, pip-audit)
+    Fixed sandbox issues: git "dubious ownership", HOME write permissions, trivy DB cache ownership
+    Dropped semgrep from the pipeline (sandbox-incompatible RPC subprocess crash) — 4-tool pipeline now stable
+    Manual end-to-end test of the scanner container — confirmed clean output for all 5 tool JSON files
+    Fixed clone.ts typo (--n0-tags → --no-tags)
+    Ran the full worker for the first time — queue → clone → docker → normalize → Postgres write, fully automated
+    src/lib/prisma.ts (Next.js) — DB connection via PrismaPg adapter
+    src/lib/queue.ts (Next.js) — BullMQ producer, mirrors worker's queue contract
+    src/app/api/scans/route.ts — POST creates a Scan row + enqueues the job
+    src/app/api/scans/[scanId]/route.ts — GET polls scan status + findings
+    Verified full production path end-to-end via Postman: real API → real DB → real queue → real worker → real Docker scan → real findings write-back

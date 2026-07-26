@@ -24,7 +24,7 @@ export async function cloneRepo(params:{
     await mkdir(repoDir,{recursive:true});
     await mkdir(outputDir,{recursive:true});
 
-    const args=["clone", "--n0-tags", "--single-branch"];
+    const args=["clone", "--no-tags", "--single-branch"];
     if (!params.checkHistory) args.push("--depth","1");
     args.push(params.cloneUrl,repoDir);
 
