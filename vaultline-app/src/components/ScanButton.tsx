@@ -4,14 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface ScanButtonProps {
-  repoId: string;
   fullName: string;
+  private?: boolean;
+  language?: string | null;
 }
 
-export default function ScanButton({ repoId, fullName }: ScanButtonProps) {
+export default function ScanButton({ fullName, private: isPrivate, language }: ScanButtonProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [checkHistory, setCheckHistory] = useState(false); // fast scan by default
 
   async function handleClick() {
     setLoading(true);
@@ -22,9 +24,10 @@ export default function ScanButton({ repoId, fullName }: ScanButtonProps) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          repoId,
           fullName,
-          checkHistory: true,
+          private: isPrivate,
+          language,
+          checkHistory,
         }),
       });
 
@@ -43,10 +46,20 @@ export default function ScanButton({ repoId, fullName }: ScanButtonProps) {
 
   return (
     <div>
+      <label className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+        <input
+          type="checkbox"
+          checked={checkHistory}
+          onChange={(e) => setCheckHistory(e.target.checked)}
+          disabled={loading}
+        />
+        Check full commit history (slower, catches secrets removed later)
+      </label>
+
       <button
         onClick={handleClick}
         disabled={loading}
-        className="mt-2 px-3 py-1.5 rounded bg-indigo-600 text-white text-sm disabled:opacity-50"
+        className="px-3 py-1.5 rounded bg-indigo-600 text-white text-sm disabled:opacity-50"
       >
         {loading ? "Starting scan…" : "Scan"}
       </button>

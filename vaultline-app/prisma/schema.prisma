@@ -37,7 +37,7 @@ enum ScanStatus {
 model Repo {
   id         String   @id @default(cuid())
   name       String
-  fullName   String
+  fullName   String   @unique
   private    Boolean
   language   String?
   lastScanId String?
@@ -72,3 +72,12 @@ model Finding {
   suggestedFix String?
   ignored      Boolean  @default(false)
 }
+
+model User {
+  id String @id @default(cuid())
+  email String @unique
+  name String?
+  password String?
+  createdAt DateTime @default(now())
+}
+

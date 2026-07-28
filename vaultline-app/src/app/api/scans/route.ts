@@ -4,8 +4,9 @@ import { getScanQueue } from "@/lib/queue";
 import { auth } from "../../../../auth";
 
 interface TriggerScanBody {
-  repoId: string;
-  fullName: string; 
+  fullName: string;
+  private?: boolean;
+  language?: string | null;
   checkHistory?: boolean;
 }
 
@@ -25,17 +26,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  if (!body.repoId || !body.fullName) {
-    return NextResponse.json(
-      { error: "repoId and fullName are required" },
-      { status: 400 }
-    );
+  if (!body.fullName) {
+    return NextResponse.json({ error: "fullName is required" }, { status: 400 });
   }
 
-  const repo = await prisma.repo.findUnique({ where: { id: body.repoId } });
-  if (!repo) {
-    return NextResponse.json({ error: "Repo not found" }, { status: 404 });
-  }
+  const repo = await prisma.repo.upsert({
+    where: { fullName: body.fullName },
+    update: {},
+    create: {
+      fullName: body.fullName,
+      name: body.fullName.split("/").pop() || body.fullName,
+      private: body.private ?? false,
+      language: body.language ?? null,
+    },
+  });
 
   const scan = await prisma.scan.create({
     data: { repoId: repo.id, status: "queued" },

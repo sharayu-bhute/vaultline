@@ -1,9 +1,10 @@
-import { auth, signIn } from "../../auth";
+import { auth } from "../../auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function LandingPage() {
   const session = await auth();
-  
+
   if (session?.user) {
     redirect("/dashboard");
   }
@@ -19,16 +20,20 @@ export default async function LandingPage() {
           dependencies, and misconfigurations — automatically, on every push.
         </p>
 
-        <form
-          action={async () => {
-            "use server";
-            await signIn("github", { redirectTo: "/dashboard" });
-          }}
-        >
-          <button className="inline-block bg-slate-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-slate-800 transition-colors">
-            Sign in with GitHub
-          </button>
-        </form>
+        <div className="flex flex-col items-center gap-3">
+          <Link
+            href="/login"
+            className="inline-block bg-slate-900 text-white px-6 py-3 rounded-lg font-medium hover:bg-slate-800 transition-colors w-64 text-center"
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            className="inline-block border px-6 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors w-64 text-center"
+          >
+            Create an account
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -23,3 +23,10 @@
     src/app/api/scans/route.ts — POST creates a Scan row + enqueues the job
     src/app/api/scans/[scanId]/route.ts — GET polls scan status + findings
     Verified full production path end-to-end via Postman: real API → real DB → real queue → real worker → real Docker scan → real findings write-back
+
+4.28/7/26
+    worked on:
+        1. normal signin/login
+        2. github sign in
+        3. repo fetching
+        4. history switch btn 
