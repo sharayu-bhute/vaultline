@@ -16,6 +16,7 @@ enum Tool {
   trivy
   npm_audit
   pip_audit
+  url_scan
 }
 
 enum Severity {

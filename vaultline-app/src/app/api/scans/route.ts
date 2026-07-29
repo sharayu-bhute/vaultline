@@ -54,8 +54,8 @@ export async function POST(req: NextRequest) {
       scanId: scan.id,
       repoId: repo.id,
       fullName: body.fullName,
-      cloneUrl,
       checkHistory: body.checkHistory ?? true,
+      source: { type: "git" as const, cloneUrl },
     },
     { removeOnComplete: 500, removeOnFail: 500 }
   );

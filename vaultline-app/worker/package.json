@@ -12,11 +12,13 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.0",
     "@prisma/client": "^7.9.0",
+    "adm-zip": "^0.6.0",
     "bullmq": "^5.34.0",
     "ioredis": "^5.4.1",
     "next-auth": "^5.0.0-beta.32"
   },
   "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
     "@types/node": "^20",
     "tsx": "^4.19.2",
     "typescript": "^5"

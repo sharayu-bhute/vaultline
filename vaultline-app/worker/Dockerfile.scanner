@@ -30,6 +30,7 @@ USER scanner
 WORKDIR /repo
 
 COPY --chown=scanner:scanner docker/entrypoint.sh /scripts/entrypoint.sh
+COPY --chown=scanner:scanner docker/urlscan.py /scripts/urlscan.py
 USER root
 RUN chmod +x /scripts/entrypoint.sh
 USER scanner

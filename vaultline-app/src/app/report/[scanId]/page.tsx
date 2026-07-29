@@ -1,5 +1,5 @@
 import Navbar from "@/components/Navbar";
-import FindingCard from "@/components/FindingCard";
+import FindingsList from "@/components/FindingsList";
 import { prisma } from "@/lib/prisma";
 
 export default async function ReportPage({
@@ -34,11 +34,7 @@ export default async function ReportPage({
           Scan status: {scan.status} • {scan.findings.length} finding(s)
         </p>
 
-        <div className="flex flex-col gap-4">
-          {scan.findings.map((finding) => (
-            <FindingCard key={finding.id} finding={finding} />
-          ))}
-        </div>
+        <FindingsList findings={scan.findings} />
       </main>
     </div>
   );

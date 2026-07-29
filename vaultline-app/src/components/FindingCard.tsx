@@ -3,14 +3,29 @@ import SeverityTag from "./SeverityTag";
 
 interface FindingCardProps {
   finding: Finding;
+  onToggleIgnore?: () => void;
 }
 
-export default function FindingCard({ finding }: FindingCardProps) {
+export default function FindingCard({ finding, onToggleIgnore }: FindingCardProps) {
   return (
-    <div className="border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300">
+    <div
+      className={`border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300 ${
+        finding.ignored ? "opacity-60" : ""
+      }`}
+    >
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-lg font-semibold">{finding.title}</h3>
-        <SeverityTag severity={finding.severity} />
+        <div className="flex items-center gap-2">
+          <SeverityTag severity={finding.severity} />
+          {onToggleIgnore && (
+            <button
+              onClick={onToggleIgnore}
+              className="text-xs border rounded px-2 py-1 text-gray-600 hover:bg-gray-50"
+            >
+              {finding.ignored ? "Unignore" : "Ignore"}
+            </button>
+          )}
+        </div>
       </div>
 
       <p className="text-gray-700 mb-3">{finding.description}</p>

@@ -20,7 +20,7 @@ export interface Repo {
 export interface Finding {
     id: string;
     scanId: string;
-    tool: "gitleaks" | "semgrep" | "trivy" | "npm_audit" | "pip_audit";
+    tool: "gitleaks" | "semgrep" | "trivy" | "npm_audit" | "pip_audit" | "url_scan";
     severity: Severity;
     title: string;
     description: string;

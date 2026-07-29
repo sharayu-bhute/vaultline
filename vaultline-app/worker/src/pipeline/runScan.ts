@@ -13,13 +13,13 @@ export async function runScan(job: ScanJobData): Promise<void> {
   });
 
   let clone: Awaited<ReturnType<typeof cloneRepo>>;
-  try {
-    clone = await cloneRepo({
-      cloneUrl: job.cloneUrl,
-      scanId,
-      checkHistory: job.checkHistory,
-    });
-  } catch (err) {
+    try {
+      clone = await cloneRepo({
+        scanId,
+        checkHistory: job.checkHistory,
+        source: job.source,
+      });
+    } catch (err) {
     await markFailed(scanId, err);
     return;
   }

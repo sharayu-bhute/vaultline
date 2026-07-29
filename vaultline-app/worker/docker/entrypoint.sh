@@ -9,6 +9,7 @@ OUT=/output
 
 echo "[]" > "$OUT/gitleaks.json"
 echo "{}" > "$OUT/semgrep.json"
+echo "{}" > "$OUT/url-scan.json"
 echo "{}" > "$OUT/trivy.json"
 echo "{}" > "$OUT/npm-audit.json"
 echo "{}" > "$OUT/pip-audit.json"
@@ -23,6 +24,9 @@ else
   log "no .git directory found, skipping gitleaks"
 fi
 
+log "running url-scan"
+echo "{}" > "$OUT/url-scan.json"
+python3 /scripts/urlscan.py "$REPO" "$OUT/url-scan.json" || true
 
 log "running trivy"
 trivy fs --skip-db-update --scanners vuln,secret,misconfig \

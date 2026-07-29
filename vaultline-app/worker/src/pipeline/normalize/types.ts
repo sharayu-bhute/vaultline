@@ -1,4 +1,4 @@
-export type Tool = "gitleaks" | "semgrep" | "trivy" | "npm_audit" | "pip_audit";
+export type Tool = "gitleaks" | "semgrep" | "trivy" | "npm_audit" | "pip_audit" | "url_scan";
 export type Severity = "critical" | "high" | "medium" | "low";
 
 export interface NormalizedFinding {

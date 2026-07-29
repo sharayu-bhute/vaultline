@@ -7,8 +7,10 @@ export interface ScanJobData {
   scanId: string;
   repoId: string;
   fullName: string;
-  cloneUrl: string;
   checkHistory: boolean;
+  source:
+    | { type: "git"; cloneUrl: string }
+    | { type: "zip"; zipPath: string };
 }
 
 let connection: IORedis | null = null;

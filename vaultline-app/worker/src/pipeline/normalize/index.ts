@@ -6,6 +6,7 @@ import { normalizeSemgrep } from "./semgrep.js";
 import { normalizeTrivy } from "./trivy.js";
 import { normalizeNpmAudit } from "./npmAudit.js";
 import { normalizePipAudit } from "./pipAudit.js";
+import { normalizeUrlScan } from "./urlScan.js";
 
 async function readJson(filePath : string): Promise<unknown>{
     try {
@@ -29,12 +30,13 @@ function fingerprint(f:NormalizedFinding): string {
 }
 
 export async function normalizeAll(outputDir: string): Promise<NormalizedFinding[]>{
-    const [gitleaksRaw, semgrepRaw, trivyRaw, npmRaw, pipRaw] = await Promise.all([
+    const [gitleaksRaw, semgrepRaw, trivyRaw, npmRaw, pipRaw, urlScanRaw] = await Promise.all([
         readJson(path.join(outputDir, "gitleaks.json")),
         readJson(path.join(outputDir, "semgrep.json")),
         readJson(path.join(outputDir, "trivy.json")),
         readJson(path.join(outputDir, "npm-audit.json")),
-        readJson(path.join(outputDir, "pip-audit.json")),   
+        readJson(path.join(outputDir, "pip-audit.json")),
+        readJson(path.join(outputDir, "url-scan.json")),
     ]);
     const all = [
         ...normalizeGitleaks(gitleaksRaw),
@@ -42,6 +44,7 @@ export async function normalizeAll(outputDir: string): Promise<NormalizedFinding
         ...normalizeTrivy(trivyRaw),
         ...normalizeNpmAudit(npmRaw),
         ...normalizePipAudit(pipRaw),
+        ...normalizeUrlScan(urlScanRaw),
     ];
 
     const seen = new Set<string>();

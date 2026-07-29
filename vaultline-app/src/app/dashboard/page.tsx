@@ -3,6 +3,7 @@ import ScanButton from "@/components/ScanButton";
 import { auth } from "../../../auth";
 import { redirect } from "next/navigation";
 import { fetchGitHubRepos } from "@/lib/github";
+import UploadScanForm from "@/components/AddProjectForm";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -59,7 +60,11 @@ async function GitHubRepoList({ accessToken }: { accessToken: string }) {
             />
           </div>
         ))}
+        <div className="mt-8">
+          <UploadScanForm />
+        </div>
       </div>
+      
     );
   } catch {
     return (

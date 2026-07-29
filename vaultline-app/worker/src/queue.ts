@@ -3,12 +3,14 @@ import { Redis as IORedis } from "ioredis";
 
 export const SCAN_QUEUE_NAME = "scan-queue";
 
-export interface ScanJobData{
-    scanId: string;
-    repoId: string;
-    fullName: string;
-    cloneUrl: string;
-    checkHistory: Boolean;
+export interface ScanJobData {
+  scanId: string;
+  repoId: string;
+  fullName: string;
+  checkHistory: boolean;
+  source:
+    | { type: "git"; cloneUrl: string }
+    | { type: "zip"; zipPath: string };
 }
 
 export function createRedisconnection(){
