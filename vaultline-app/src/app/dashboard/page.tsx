@@ -15,17 +15,19 @@ export default async function DashboardPage() {
     ?.accessToken;
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
       <main className="max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">Your Repositories</h1>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-6">
+          Your repositories
+        </h1>
 
         {accessToken ? (
           <GitHubRepoList accessToken={accessToken} />
         ) : (
           <p className="text-gray-500">
             Sign in with GitHub to see your repositories here, or use the
-            upload option below. {/* upload flow coming next */}
+            upload option below.
           </p>
         )}
       </main>
@@ -38,20 +40,29 @@ async function GitHubRepoList({ accessToken }: { accessToken: string }) {
     const repos = await fetchGitHubRepos(accessToken);
 
     if (repos.length === 0) {
-      return <p className="text-gray-500">No repositories found on your GitHub account.</p>;
+      return (
+        <p className="text-gray-500">
+          No repositories found on your GitHub account.
+        </p>
+      );
     }
 
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {repos.map((repo) => (
-          <div key={repo.id} className="border rounded-lg p-4 shadow-sm">
-            <h2 className="text-xl font-semibold mb-2">{repo.name}</h2>
-            <p className="text-gray-600 mb-2">{repo.full_name}</p>
-            <p className="text-gray-600 mb-4">
+          <div
+            key={repo.id}
+            className="bg-white border border-gray-200 rounded-xl p-4"
+          >
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">
+              {repo.name}
+            </h2>
+            <p className="text-sm text-gray-500 mb-1">{repo.full_name}</p>
+            <p className="text-sm text-gray-500 mb-1">
               {repo.language ? `Language: ${repo.language}` : "Language: N/A"}
             </p>
-            <p className="text-gray-600 mb-4">
-              {repo.private ? "Private Repository" : "Public Repository"}
+            <p className="text-sm text-gray-500 mb-4">
+              {repo.private ? "Private repository" : "Public repository"}
             </p>
             <ScanButton
               fullName={repo.full_name}
@@ -60,15 +71,14 @@ async function GitHubRepoList({ accessToken }: { accessToken: string }) {
             />
           </div>
         ))}
-        <div className="mt-8">
+        <div className="md:col-span-2 mt-4">
           <UploadScanForm />
         </div>
       </div>
-      
     );
   } catch {
     return (
-      <p className="text-red-600">
+      <p className="text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-4 py-3 text-sm">
         Couldn&apos;t load your GitHub repositories. Try signing out and back in.
       </p>
     );

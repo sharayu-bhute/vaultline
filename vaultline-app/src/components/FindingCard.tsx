@@ -6,21 +6,29 @@ interface FindingCardProps {
   onToggleIgnore?: () => void;
 }
 
+const ACCENT_COLOR: Record<Finding["severity"], string> = {
+  critical: "#D85A30", // coral — most urgent
+  high: "#EF9F27",     // amber
+  medium: "#7F77DD",   // indigo
+  low: "#B4B2A9",      // gray
+};
+
 export default function FindingCard({ finding, onToggleIgnore }: FindingCardProps) {
   return (
     <div
-      className={`border rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow duration-300 ${
+      style={{ borderLeftColor: ACCENT_COLOR[finding.severity] }}
+      className={`bg-white border border-gray-200 border-l-4 rounded-r-xl rounded-l-none p-4 ${
         finding.ignored ? "opacity-60" : ""
       }`}
     >
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-lg font-semibold">{finding.title}</h3>
+        <h3 className="text-base font-semibold text-gray-900">{finding.title}</h3>
         <div className="flex items-center gap-2">
           <SeverityTag severity={finding.severity} />
           {onToggleIgnore && (
             <button
               onClick={onToggleIgnore}
-              className="text-xs border rounded px-2 py-1 text-gray-600 hover:bg-gray-50"
+              className="text-xs border border-gray-200 rounded-lg px-2 py-1 text-gray-600 hover:bg-gray-50"
             >
               {finding.ignored ? "Unignore" : "Ignore"}
             </button>
@@ -28,9 +36,9 @@ export default function FindingCard({ finding, onToggleIgnore }: FindingCardProp
         </div>
       </div>
 
-      <p className="text-gray-700 mb-3">{finding.description}</p>
+      <p className="text-gray-700 mb-3 text-sm">{finding.description}</p>
 
-      <p className="text-sm text-gray-500 mb-1">
+      <p className="text-xs text-gray-500 mb-1 font-mono">
         {finding.filePath}
         {finding.lineNumber !== null && `:${finding.lineNumber}`}
       </p>
@@ -41,7 +49,7 @@ export default function FindingCard({ finding, onToggleIgnore }: FindingCardProp
         {finding.commitHash && ` • Commit: ${finding.commitHash}`}
       </p>
 
-      <p className="text-sm bg-slate-50 border rounded p-2 mb-2">
+      <p className="text-sm bg-indigo-50 border border-indigo-100 rounded-lg p-2 mb-2 text-indigo-900">
         <span className="font-medium">Suggested fix: </span>
         {finding.suggestedFix}
       </p>

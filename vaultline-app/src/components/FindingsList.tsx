@@ -12,8 +12,6 @@ export default function FindingsList({ findings: initial }: { findings: Finding[
   const [showIgnored, setShowIgnored] = useState(false);
 
   async function toggleIgnored(findingId: string, ignored: boolean) {
-    // Optimistic update — flip it in the UI immediately, roll back only if
-    // the request actually fails, rather than waiting on a round trip.
     setFindings((prev) =>
       prev.map((f) => (f.id === findingId ? { ...f, ignored } : f))
     );
@@ -26,7 +24,6 @@ export default function FindingsList({ findings: initial }: { findings: Finding[
       });
       if (!res.ok) throw new Error();
     } catch {
-      // Roll back on failure.
       setFindings((prev) =>
         prev.map((f) => (f.id === findingId ? { ...f, ignored: !ignored } : f))
       );
@@ -49,11 +46,20 @@ export default function FindingsList({ findings: initial }: { findings: Finding[
 
   return (
     <div>
+      <div className="grid grid-cols-4 gap-2 mb-5">
+        <SummaryTile label="Critical" value={counts.critical} tone="amber-strong" />
+        <SummaryTile label="High" value={counts.high} tone="amber" />
+        <SummaryTile label="Medium" value={counts.medium} tone="indigo" />
+        <SummaryTile label="Low" value={counts.low} tone="gray" />
+      </div>
+
       <div className="flex flex-wrap items-center gap-2 mb-4">
         <button
           onClick={() => setActiveSeverity("all")}
           className={`px-3 py-1 rounded-full text-sm ${
-            activeSeverity === "all" ? "bg-slate-900 text-white" : "border"
+            activeSeverity === "all"
+              ? "bg-indigo-950 text-white"
+              : "border border-gray-200 text-gray-600"
           }`}
         >
           All ({findings.filter((f) => !f.ignored).length})
@@ -63,7 +69,9 @@ export default function FindingsList({ findings: initial }: { findings: Finding[
             key={s}
             onClick={() => setActiveSeverity(s)}
             className={`px-3 py-1 rounded-full text-sm capitalize ${
-              activeSeverity === s ? "bg-slate-900 text-white" : "border"
+              activeSeverity === s
+                ? "bg-indigo-950 text-white"
+                : "border border-gray-200 text-gray-600"
             }`}
           >
             {s} ({counts[s]})
@@ -75,6 +83,7 @@ export default function FindingsList({ findings: initial }: { findings: Finding[
             type="checkbox"
             checked={showIgnored}
             onChange={(e) => setShowIgnored(e.target.checked)}
+            className="accent-indigo-700"
           />
           Show ignored
         </label>
@@ -83,7 +92,7 @@ export default function FindingsList({ findings: initial }: { findings: Finding[
       {visible.length === 0 ? (
         <p className="text-gray-500 text-sm">No findings match this filter.</p>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {visible.map((finding) => (
             <FindingCard
               key={finding.id}
@@ -95,6 +104,30 @@ export default function FindingsList({ findings: initial }: { findings: Finding[
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function SummaryTile({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone: "amber-strong" | "amber" | "indigo" | "gray";
+}) {
+  const styles = {
+    "amber-strong": "bg-amber-100 text-amber-900",
+    amber: "bg-amber-50 text-amber-800",
+    indigo: "bg-indigo-100 text-indigo-900",
+    gray: "bg-gray-100 text-gray-700",
+  }[tone];
+
+  return (
+    <div className={`rounded-lg px-3 py-2 text-center ${styles}`}>
+      <p className="text-lg font-semibold">{value}</p>
+      <p className="text-xs">{label}</p>
     </div>
   );
 }

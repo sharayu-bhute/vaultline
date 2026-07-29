@@ -57,21 +57,32 @@ export default function AddProjectForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border rounded-lg p-4 max-w-md flex flex-col gap-3">
-      <h2 className="font-semibold">Scan a project</h2>
+    <form
+      onSubmit={handleSubmit}
+      className="border border-dashed border-amber-300 bg-amber-50/40 rounded-xl p-4 max-w-md flex flex-col gap-3"
+    >
+      <h2 className="font-semibold text-gray-900">Scan a project</h2>
 
       <div className="flex gap-2 text-sm">
         <button
           type="button"
           onClick={() => setMode("zip")}
-          className={`px-3 py-1 rounded ${mode === "zip" ? "bg-slate-900 text-white" : "border"}`}
+          className={`px-3 py-1.5 rounded-lg ${
+            mode === "zip"
+              ? "bg-indigo-950 text-white"
+              : "border border-gray-200 text-gray-600"
+          }`}
         >
           Upload .zip
         </button>
         <button
           type="button"
           onClick={() => setMode("url")}
-          className={`px-3 py-1 rounded ${mode === "url" ? "bg-slate-900 text-white" : "border"}`}
+          className={`px-3 py-1.5 rounded-lg ${
+            mode === "url"
+              ? "bg-indigo-950 text-white"
+              : "border border-gray-200 text-gray-600"
+          }`}
         >
           Git URL
         </button>
@@ -84,7 +95,7 @@ export default function AddProjectForm() {
             placeholder="Project name (optional)"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="border rounded px-3 py-2 text-sm"
+            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white"
           />
           <input
             type="file"
@@ -99,15 +110,15 @@ export default function AddProjectForm() {
           placeholder="https://github.com/owner/repo.git"
           value={gitUrl}
           onChange={(e) => setGitUrl(e.target.value)}
-          className="border rounded px-3 py-2 text-sm"
+          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white"
         />
       )}
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-amber-800">{error}</p>}
       <button
         type="submit"
         disabled={loading}
-        className="bg-indigo-600 text-white py-2 rounded font-medium text-sm disabled:opacity-50"
+        className="bg-indigo-950 text-white py-2 rounded-lg font-medium text-sm disabled:opacity-50 hover:bg-indigo-900 transition-colors"
       >
         {loading ? "Starting…" : "Scan"}
       </button>

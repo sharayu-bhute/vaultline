@@ -3,6 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Brand palette — deep indigo (primary) + warm amber (accent) */
+  --brand-indigo: #3c3489;
+  --brand-indigo-dark: #26215c;
+  --brand-indigo-light: #eeedfe;
+  --brand-amber: #ef9f27;
+  --brand-amber-dark: #412402;
 }
 
 @theme inline {
@@ -12,12 +19,11 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/*
+  Intentionally no `prefers-color-scheme: dark` override here.
+  Vaultline is a light-only product for now — always render the
+  light palette regardless of the visitor's OS theme.
+*/
 
 body {
   background: var(--background);

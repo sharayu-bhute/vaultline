@@ -52,6 +52,7 @@ export default function ScanButton({ fullName, private: isPrivate, language }: S
           checked={checkHistory}
           onChange={(e) => setCheckHistory(e.target.checked)}
           disabled={loading}
+          className="accent-indigo-700"
         />
         Check full commit history (slower, catches secrets removed later)
       </label>
@@ -59,11 +60,13 @@ export default function ScanButton({ fullName, private: isPrivate, language }: S
       <button
         onClick={handleClick}
         disabled={loading}
-        className="px-3 py-1.5 rounded bg-indigo-600 text-white text-sm disabled:opacity-50"
+        className="px-4 py-2 rounded-lg bg-indigo-950 text-white text-sm font-medium disabled:opacity-50 hover:bg-indigo-900 transition-colors"
       >
-        {loading ? "Starting scan…" : "Scan"}
+        {loading ? "Starting scan…" : "Run scan"}
       </button>
-      {error && <p className="text-sm text-red-600 mt-1">{error}</p>}
+      {error && (
+        <p className="text-sm text-amber-800 mt-1">{error}</p>
+      )}
     </div>
   );
 }
