@@ -59,18 +59,23 @@ export default function AddProjectForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="border border-dashed border-amber-300 bg-amber-50/40 rounded-xl p-4 max-w-md flex flex-col gap-3"
+      className="border border-dashed border-amber-300 rounded-2xl p-6 sm:p-8 w-full flex flex-col gap-4 shadow-sm"
     >
-      <h2 className="font-semibold text-gray-900">Scan a project</h2>
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900">Scan a project</h2>
+        <p className="text-sm text-gray-500 mt-0.5">
+          Upload a zip archive or point us at a git repository.
+        </p>
+      </div>
 
       <div className="flex gap-2 text-sm">
         <button
           type="button"
           onClick={() => setMode("zip")}
-          className={`px-3 py-1.5 rounded-lg ${
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             mode === "zip"
-              ? "bg-indigo-950 text-white"
-              : "border border-gray-200 text-gray-600"
+              ? "bg-[#26215C] text-white"
+              : "border border-gray-200 text-gray-600 hover:bg-gray-50"
           }`}
         >
           Upload .zip
@@ -78,10 +83,10 @@ export default function AddProjectForm() {
         <button
           type="button"
           onClick={() => setMode("url")}
-          className={`px-3 py-1.5 rounded-lg ${
+          className={`px-4 py-2 rounded-lg font-medium transition-colors ${
             mode === "url"
-              ? "bg-indigo-950 text-white"
-              : "border border-gray-200 text-gray-600"
+              ? "bg-[#26215C] text-white"
+              : "border border-gray-200 text-gray-600 hover:bg-gray-50"
           }`}
         >
           Git URL
@@ -95,14 +100,19 @@ export default function AddProjectForm() {
             placeholder="Project name (optional)"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white"
+            className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-200"
           />
-          <input
-            type="file"
-            accept=".zip"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            className="text-sm"
-          />
+          <label className="border border-dashed border-gray-300 rounded-lg px-4 py-6 text-center cursor-pointer hover:bg-gray-50 transition-colors">
+            <input
+              type="file"
+              accept=".zip"
+              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              className="hidden"
+            />
+            <p className="text-sm text-gray-600">
+              {file ? file.name : "Click to choose a .zip file"}
+            </p>
+          </label>
         </>
       ) : (
         <input
@@ -110,15 +120,16 @@ export default function AddProjectForm() {
           placeholder="https://github.com/owner/repo.git"
           value={gitUrl}
           onChange={(e) => setGitUrl(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white"
+          className="border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-200"
         />
       )}
 
-      {error && <p className="text-sm text-amber-800">{error}</p>}
+      {error && <p className="text-sm text-red-600">{error}</p>}
+
       <button
         type="submit"
         disabled={loading}
-        className="bg-indigo-950 text-white py-2 rounded-lg font-medium text-sm disabled:opacity-50 hover:bg-indigo-900 transition-colors"
+        className="bg-[#26215C] text-white py-2.5 rounded-lg font-medium text-sm disabled:opacity-50 hover:bg-[#1c1846] transition-colors"
       >
         {loading ? "Starting…" : "Scan"}
       </button>

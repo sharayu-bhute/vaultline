@@ -2,6 +2,7 @@ import { prisma } from "../prisma.js";
 import { cloneRepo } from "./clone.js";
 import { runSandboxedScan } from "./docker.js";
 import { normalizeAll } from "./normalize/index.js";
+import { redactSecrets } from "../redact.js";
 import type { ScanJobData } from "../queue.js";
 
 export async function runScan(job: ScanJobData): Promise<void> {
@@ -13,13 +14,13 @@ export async function runScan(job: ScanJobData): Promise<void> {
   });
 
   let clone: Awaited<ReturnType<typeof cloneRepo>>;
-    try {
-      clone = await cloneRepo({
-        scanId,
-        checkHistory: job.checkHistory,
-        source: job.source,
-      });
-    } catch (err) {
+  try {
+    clone = await cloneRepo({
+      scanId,
+      checkHistory: job.checkHistory,
+      source: job.source,
+    });
+  } catch (err) {
     await markFailed(scanId, err);
     return;
   }
@@ -36,11 +37,15 @@ export async function runScan(job: ScanJobData): Promise<void> {
     await prisma.scan.update({ where: { id: scanId }, data: { status: "reporting" } });
 
     const findings = await normalizeAll(clone.outputDir);
+    const redactedFindings = findings.map((f) => ({
+      ...f,
+      description: redactSecrets(f.description),
+    }));
 
     await prisma.$transaction([
-      prisma.finding.deleteMany({ where: { scanId } }), 
+      prisma.finding.deleteMany({ where: { scanId } }),
       prisma.finding.createMany({
-        data: findings.map((f) => ({ ...f, scanId })),
+        data: redactedFindings.map((f) => ({ ...f, scanId })),
       }),
       prisma.scan.update({
         where: { id: scanId },

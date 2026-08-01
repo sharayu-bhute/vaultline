@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       checkHistory: body.checkHistory ?? true,
       source: { type: "git" as const, cloneUrl },
     },
-    { removeOnComplete: 500, removeOnFail: 500 }
+    { removeOnComplete: true, removeOnFail: true }
   );
 
   const waitingCount = await queue.getWaitingCount();

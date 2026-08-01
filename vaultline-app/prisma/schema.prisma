@@ -52,16 +52,17 @@ model Scan {
   repo          Repo       @relation(fields: [repoId], references: [id])
   status        ScanStatus
   queuePosition Int?
+  createdAt     DateTime   @default(now())
   startedAt     DateTime?
   completedAt   DateTime?
-
   findings      Finding[]
+  saved         Boolean    @default(false)
 }
 
 model Finding {
   id           String   @id @default(cuid())
   scanId       String
-  scan         Scan     @relation(fields: [scanId], references: [id])
+  scan         Scan     @relation(fields: [scanId], references: [id], onDelete: Cascade)
   tool         Tool
   severity     Severity
   title        String
@@ -72,6 +73,7 @@ model Finding {
   cveId        String?
   suggestedFix String?
   ignored      Boolean  @default(false)
+  plainSummary String?
 }
 
 model User {
