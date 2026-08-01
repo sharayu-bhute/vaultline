@@ -12,14 +12,14 @@ export default async function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white relative overflow-hidden">
-      <div className="absolute -inset-40 bg-[#7F77DD] opacity-25 blur-[130px] pointer-events-none select-none" />
+      <div className="absolute -inset-40 bg-[#7F77DD] opacity-25 blur-[130px] pointer-events-none select-none " />
 
       <header className="border-b border-gray-100 px-6 h-16 flex items-center justify-between">
         <Logo size={32} />
       </header>
 
       <main className="relative z-10 max-w-5xl mx-auto px-6 py-16">
-        <div className="rounded-3xl bg-gradient-to-br from-[#3C3489] to-[#26215C] relative overflow-hidden p-10 md:p-14 text-white">
+        <div className="rounded-3xl bg-gradient-to-br from-[#3C3489] to-[#26215C] relative overflow-hidden p-10 md:p-14 text-white shadow-lg">
          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-[#EF9F27]/20 animate-float" />
           <div className="absolute -bottom-24 -left-10 w-56 h-56 rounded-full bg-white/5 animate-float" />
 

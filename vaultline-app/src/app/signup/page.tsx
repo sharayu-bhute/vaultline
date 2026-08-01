@@ -49,7 +49,7 @@ export default function SignupPage() {
         <Logo size={32} />
       </header>
 
-      <div className="relative z-10 min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10">
+      <div className="relative z-10 min-h-[calc(100vh)] flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-3xl grid md:grid-cols-2 rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
           {/* Left panel — brand + feature list, matching landing hero gradient */}
           <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-[#3C3489] to-[#26215C] relative overflow-hidden p-10">
