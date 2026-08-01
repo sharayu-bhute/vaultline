@@ -21,5 +21,3 @@ export async function fetchGitHubRepos(accessToken: string): Promise<GitHubRepo[
 
   return res.json();
 }
-
-    

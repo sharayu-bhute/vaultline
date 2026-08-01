@@ -9,4 +9,3 @@ export default function SeverityTag({severity}:{severity: Severity}) {
         </span>
     );
 }
-
