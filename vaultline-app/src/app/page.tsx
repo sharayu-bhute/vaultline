@@ -86,8 +86,6 @@ function OutputRow({
   );
 }
 
-
-
 function CapabilityTile({
   icon,
   label,
