@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { redactSecrets } from "@/lib/redact";
 
 export async function POST(
   req: NextRequest,
@@ -17,6 +18,8 @@ export async function POST(
   if (finding.suggestedFix && !force) {
     return NextResponse.json({ suggestedFix: finding.suggestedFix });
   }
+
+  const safeDescription = redactSecrets(finding.description);
 
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -43,7 +46,7 @@ File: ${finding.filePath}${finding.lineNumber ? `:${finding.lineNumber}` : ""}
 Tool: ${finding.tool}
 
 Finding:
-${finding.description}`,
+${safeDescription}`,
           },
         ],
         max_tokens: 400,
@@ -64,7 +67,7 @@ ${finding.description}`,
     });
 
     return NextResponse.json({ suggestedFix });
-  } catch (err) {
+  } catch {
     return NextResponse.json(
       { error: "Couldn't generate a fix suggestion. Try again later." },
       { status: 500 }

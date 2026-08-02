@@ -31,6 +31,18 @@ export default async function Navbar() {
           >
             Reports
           </Link>
+          <Link
+            href="/about"
+            className="px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:text-[#26215C] hover:bg-white hover:shadow-sm transition-all"
+          >
+            About
+          </Link>
+          <Link
+            href="/reviews"
+            className="px-4 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:text-[#26215C] hover:bg-white hover:shadow-sm transition-all"
+          >
+            Reviews
+          </Link>
         </div>
 
         {session?.user && (

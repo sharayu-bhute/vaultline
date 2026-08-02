@@ -41,8 +41,10 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  const user = await prisma.user.findUnique({ where: { email: session.user.email! } });
+
   const scan = await prisma.scan.create({
-    data: { repoId: repo.id, status: "queued" },
+    data: { repoId: repo.id, status: "queued", userId: user?.id },
   });
 
   const queue = getScanQueue();

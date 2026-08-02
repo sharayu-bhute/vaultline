@@ -6,12 +6,16 @@ export async function POST(
   { params }: { params: Promise<{ scanId: string }> }
 ) {
   const { scanId } = await params;
-  const { saved } = await req.json();
+  const body = await req.json().catch(() => ({}));
+
+  if (typeof body.saved !== "boolean") {
+    return NextResponse.json({ error: "saved must be a boolean" }, { status: 400 });
+  }
 
   const scan = await prisma.scan.update({
     where: { id: scanId },
-    data: { ...(saved !== undefined ? ({ saved } as any) : {}) },
+    data: { saved: body.saved },
   });
 
-  return NextResponse.json({ saved: (scan as any).saved ?? saved });
+  return NextResponse.json({ saved: scan.saved });
 }

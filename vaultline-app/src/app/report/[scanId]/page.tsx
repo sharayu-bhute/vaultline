@@ -2,6 +2,8 @@ import Navbar from "@/components/Navbar";
 import FindingsList from "@/components/FindingsList";
 import ReportActions from "@/components/ReportActions";
 import { prisma } from "@/lib/prisma";
+import { auth } from "../../../../auth";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
 export default async function ReportPage({
@@ -9,11 +11,16 @@ export default async function ReportPage({
 }: {
   params: Promise<{ scanId: string }>;
 }) {
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   const { scanId } = await params;
 
   const scan = await prisma.scan.findUnique({
     where: { id: scanId },
-    include: { findings: true, repo: true },
+    include: { findings: true, repo: true, user: true },
   });
 
   if (!scan) {
@@ -22,6 +29,17 @@ export default async function ReportPage({
         <Navbar />
         <main className="max-w-6xl mx-auto px-4 py-8">
           <p className="text-amber-800">Scan not found.</p>
+        </main>
+      </div>
+    );
+  }
+  
+  if (scan.user?.email !== session.user.email) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <main className="max-w-6xl mx-auto px-4 py-8">
+          <p className="text-red-600">You don&apos;t have access to this report.</p>
         </main>
       </div>
     );
@@ -36,7 +54,7 @@ export default async function ReportPage({
           className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-[#26215C] transition-colors mb-4"
         >
           <ArrowLeftIcon />
-          Back to dashboard
+          Back
         </Link>
 
         <div className="bg-white border border-gray-200 rounded-2xl p-6">

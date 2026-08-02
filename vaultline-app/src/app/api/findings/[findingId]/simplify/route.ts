@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { redactSecrets } from "../../../../../../worker/src/redact";
 
 export async function POST(
   req: NextRequest,
@@ -28,7 +29,7 @@ export async function POST(
         messages: [
           {
             role: "user",
-            content: `Rewrite this security finding for someone with no security background. 2-4 short sentences. No jargon, no code, no CVE IDs. Explain: what's wrong, why it matters, in plain everyday language.\n\n${finding.description}`,
+            content: `Rewrite this security finding for someone with no security background. 2-4 short sentences. No jargon, no code, no CVE IDs. Explain: what's wrong, why it matters, in plain everyday language.\n\n${redactSecrets(finding.description)}`,
           },
         ],
         max_tokens: 300,

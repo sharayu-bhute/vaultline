@@ -9,7 +9,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     GitHub({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
-      authorization: { params: { scope: "read:user repo" } },
+      authorization: { params: { scope: "read:user user:email repo" } },
     }),
     Credentials({
       credentials:{
@@ -37,8 +37,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   pages:{
     signIn:"/login",
   },
-  callbacks: {
-
+callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "github" && user.email) {
+        await prisma.user.upsert({
+          where: { email: user.email },
+          update: {}, // already exists — leave it alone
+          create: { email: user.email, name: user.name || null },
+        });
+      }
+      return true;
+    },
     async jwt({ token, account }) {
       if (account?.access_token) {
         token.accessToken = account.access_token;
