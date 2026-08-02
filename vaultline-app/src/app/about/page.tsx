@@ -100,7 +100,7 @@ export default function AboutPage() {
         {/* Privacy */}
         <div className="rounded-2xl bg-gray-50 border border-gray-200 p-8 mb-16">
           <h2 className="text-lg font-semibold mb-3 text-gray-900">
-            What we do — and don&apos;t — keep
+            What we do and don&apos;t keep
           </h2>
           <ul className="flex flex-col gap-2 text-sm text-gray-600">
             <li>✓ Findings (file, line, severity, description) are stored so you can review a report later.</li>
@@ -110,6 +110,30 @@ export default function AboutPage() {
             <li>✗ Scans never phone home — the sandbox has no network access while tools are running.</li>
             <li>✗ Findings are pattern-redacted before an AI fix suggestion is generated, so secret-looking text isn&apos;t sent to a third party unmasked.</li>
           </ul>
+        </div>
+
+        {/* Reviews CTA */}
+        <div className="relative overflow-hidden rounded-2xl bg-gray-50 border border-gray-200 p-8 mb-16">
+          <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div>
+                <h2 className="text-lg font-semibold text-black mb-1">
+                  Vaultline is free to use
+                </h2>
+                <p className="text-sm text-black/80 leading-relaxed max-w-md">
+                  If it's helped you catch something, a quick review helps other
+                  developers decide whether to trust it too.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/reviews"
+              className="group inline-flex items-center justify-center gap-2 bg-[#EF9F27] text-[#412402] px-5 py-2.5 rounded-lg font-medium text-sm hover:bg-[#f4b04f] transition-colors flex-shrink-0"
+            >
+              Leave a review
+            </Link>
+          </div>
         </div>
 
         <div className="text-center">
