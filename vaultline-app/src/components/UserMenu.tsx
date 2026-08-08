@@ -6,18 +6,22 @@ export default function UserMenu({
   name,
   image,
   signOutAction,
+  deleteAccountAction,
 }: {
   name: string | null | undefined;
   image: string | null | undefined;
   signOutAction: () => Promise<void>;
+  deleteAccountAction: () => Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setOpen(false);
+        setConfirmingDelete(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -42,15 +46,52 @@ export default function UserMenu({
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-20">
-          <form action={signOutAction}>
-            <button
-              type="submit"
-              className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-            >
-              Sign out
-            </button>
-          </form>
+        <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-20">
+          {!confirmingDelete ? (
+            <>
+              <form action={signOutAction}>
+                <button
+                  type="submit"
+                  className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+                >
+                  Sign out
+                </button>
+              </form>
+              <div className="my-1 border-t border-gray-100" />
+              <button
+                type="button"
+                onClick={() => setConfirmingDelete(true)}
+                className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              >
+                Delete account
+              </button>
+            </>
+          ) : (
+            <div className="px-4 py-3">
+              <p className="text-xs text-gray-600 mb-3">
+                This permanently deletes your account and unlinks your scans
+                and reviews. It also revokes this app&apos;s access on
+                GitHub. This can&apos;t be undone.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setConfirmingDelete(false)}
+                  className="flex-1 text-sm px-3 py-1.5 rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <form action={deleteAccountAction} className="flex-1">
+                  <button
+                    type="submit"
+                    className="w-full text-sm px-3 py-1.5 rounded-md bg-red-600 text-white hover:bg-red-700 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -1,4 +1,5 @@
 import { auth, signOut } from "../../auth";
+import { prisma } from "../lib/prisma";
 import Link from "next/link";
 import Logo from "./logo";
 import UserMenu from "./UserMenu";
@@ -8,6 +9,52 @@ export default async function Navbar() {
 
   async function handleSignOut() {
     "use server";
+    await signOut({ redirectTo: "/" });
+  }
+
+  async function handleDeleteAccount() {
+    "use server";
+
+    const session = await auth();
+    if (!session?.user?.email) {
+      await signOut({ redirectTo: "/" });
+      return;
+    }
+
+    const accessToken = (session as typeof session & { accessToken?: string })
+      .accessToken;
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (user) {
+      await prisma.user.delete({ where: { id: user.id } });
+    }
+
+    if (accessToken && process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET) {
+      try {
+        const basicAuth = Buffer.from(
+          `${process.env.AUTH_GITHUB_ID}:${process.env.AUTH_GITHUB_SECRET}`
+        ).toString("base64");
+
+        await fetch(
+          `https://api.github.com/applications/${process.env.AUTH_GITHUB_ID}/grant`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Basic ${basicAuth}`,
+              Accept: "application/vnd.github+json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ access_token: accessToken }),
+          }
+        );
+      } catch (err) {
+        console.error("Failed to revoke GitHub grant on account deletion:", err);
+      }
+    }
+
     await signOut({ redirectTo: "/" });
   }
 
@@ -50,6 +97,7 @@ export default async function Navbar() {
             name={session.user.name}
             image={session.user.image}
             signOutAction={handleSignOut}
+            deleteAccountAction={handleDeleteAccount}
           />
         )}
       </div>
