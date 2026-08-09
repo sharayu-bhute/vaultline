@@ -4,6 +4,7 @@ import { getScanQueue } from "@/lib/queue";
 import { auth } from "../../../../../auth";
 import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
+import os from "node:os";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -40,8 +41,7 @@ export async function POST(req: NextRequest) {
     data: { repoId: repo.id, status: "queued", userId: user?.id },
   });
 
-
-  const uploadDir = process.env.UPLOAD_DIR || "C:/vaultline-work/uploads";
+  const uploadDir = process.env.UPLOAD_DIR || path.join(os.tmpdir(), "vaultline-uploads");
   await mkdir(uploadDir, { recursive: true });
   const zipPath = path.join(uploadDir, `${scan.id}.zip`);
 
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       scanId: scan.id,
       repoId: repo.id,
       fullName,
-      checkHistory: false, 
+      checkHistory: false,
       source: { type: "zip" as const, zipPath },
     },
     { removeOnComplete: 500, removeOnFail: 500 }

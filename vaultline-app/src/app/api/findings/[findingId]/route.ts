@@ -18,6 +18,19 @@ export async function PATCH(
     return NextResponse.json({ error: "ignored must be a boolean" }, { status: 400 });
   }
 
+  const existing = await prisma.finding.findUnique({
+    where: { id: findingId },
+    include: { scan: { include: { user: true } } },
+  });
+
+  if (!existing) {
+    return NextResponse.json({ error: "Finding not found" }, { status: 404 });
+  }
+
+  if (existing.scan.user?.email !== session.user.email) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   const finding = await prisma.finding.update({
     where: { id: findingId },
     data: { ignored: body.ignored },

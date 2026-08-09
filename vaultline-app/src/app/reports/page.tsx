@@ -12,7 +12,7 @@ export default async function ReportsPage() {
   }
 
   const savedScans = await prisma.scan.findMany({
-    where: { saved: true },
+    where: { saved: true, user: { email: session.user.email! } },
     include: { repo: true, findings: true },
     orderBy: { createdAt: "desc" },
   });

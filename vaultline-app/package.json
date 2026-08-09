@@ -17,6 +17,7 @@
     "ioredis": "^5.11.1",
     "next": "16.2.11",
     "next-auth": "^5.0.0-beta.32",
+    "pdf-lib": "^1.17.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-markdown": "^10.1.0",
@@ -34,5 +35,11 @@
     "prisma": "^7.9.0",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "8.5.18",
+    "sharp": "0.35.3",
+    "find-my-way": "9.7.0",
+    "valibot": "1.4.2"
   }
 }

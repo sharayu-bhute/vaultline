@@ -50,10 +50,14 @@ export default function FindingCard({ finding, onToggleIgnore }: FindingCardProp
   const [loadingFix, setLoadingFix] = useState(false);
   const { details, poc } = parseSections(finding.description);
 
-  async function fetchPlainSummary() {
+  async function fetchPlainSummary(force = false) {
     setLoadingSimple(true);
     try {
-      const res = await fetch(`/api/findings/${finding.id}/simplify`, { method: "POST" });
+      const res = await fetch(`/api/findings/${finding.id}/simplify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ force }),
+      });
       const data = await res.json();
       setPlainSummary(data.plainSummary);
     } finally {
@@ -61,20 +65,20 @@ export default function FindingCard({ finding, onToggleIgnore }: FindingCardProp
     }
   }
 
-    async function fetchSuggestedFix() {
-      setLoadingFix(true);
-      try {
-        const res = await fetch(`/api/findings/${finding.id}/suggest-fix`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ force: !!suggestedFix }),
-        });
-        const data = await res.json();
-        setSuggestedFix(data.suggestedFix);
-      } finally {
-        setLoadingFix(false);
-      }
+  async function fetchSuggestedFix() {
+    setLoadingFix(true);
+    try {
+      const res = await fetch(`/api/findings/${finding.id}/suggest-fix`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ force: !!suggestedFix }),
+      });
+      const data = await res.json();
+      setSuggestedFix(data.suggestedFix);
+    } finally {
+      setLoadingFix(false);
     }
+  }
 
   return (
     <div
@@ -99,12 +103,23 @@ export default function FindingCard({ finding, onToggleIgnore }: FindingCardProp
       </div>
 
       {plainSummary ? (
-        <p className="text-sm text-gray-800 mb-3 leading-relaxed bg-[#EEEDFE] border border-[#3C3489]/10 rounded-lg p-3">
-          {plainSummary}
-        </p>
+        <div className="mb-3 bg-[#EEEDFE] border border-[#3C3489]/10 rounded-lg p-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-sm font-medium text-[#26215C]">Plain English</span>
+            <button
+              onClick={() => fetchPlainSummary(true)}
+              disabled={loadingSimple}
+              className="flex items-center gap-1 text-xs font-medium text-[#3C3489] hover:text-[#26215C] disabled:opacity-50"
+            >
+              <RefreshIcon spinning={loadingSimple} />
+              {loadingSimple ? "Regenerating…" : "Regenerate with AI"}
+            </button>
+          </div>
+          <p className="text-sm text-gray-800 leading-relaxed">{plainSummary}</p>
+        </div>
       ) : (
         <button
-          onClick={fetchPlainSummary}
+          onClick={() => fetchPlainSummary(false)}
           disabled={loadingSimple}
           className="flex items-center gap-1.5 text-sm font-medium text-[#3C3489] hover:text-[#26215C] mb-3 disabled:opacity-50"
         >

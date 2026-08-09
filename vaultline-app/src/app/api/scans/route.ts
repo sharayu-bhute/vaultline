@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getScanQueue } from "@/lib/queue";
+import { GITHUB_HOST } from "@/lib/config";
 import { auth } from "../../../../auth";
 
 interface TriggerScanBody {
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
   });
 
   const queue = getScanQueue();
-  const cloneUrl = `https://x-access-token:${accessToken}@github.com/${body.fullName}.git`;
+  const cloneUrl = `https://x-access-token:${accessToken}@${GITHUB_HOST}/${body.fullName}.git`;
 
   const job = await queue.add(
     "scan",

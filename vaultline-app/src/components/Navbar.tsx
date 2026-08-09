@@ -1,5 +1,6 @@
 import { auth, signOut } from "../../auth";
 import { prisma } from "../lib/prisma";
+import { GITHUB_API_BASE } from "../lib/config";
 import Link from "next/link";
 import Logo from "./logo";
 import UserMenu from "./UserMenu";
@@ -29,7 +30,14 @@ export default async function Navbar() {
     });
 
     if (user) {
-      await prisma.user.delete({ where: { id: user.id } });
+      await prisma.$transaction([
+        prisma.review.deleteMany({ where: { userId: user.id } }),
+        prisma.scan.updateMany({
+          where: { userId: user.id },
+          data: { userId: null },
+        }),
+        prisma.user.delete({ where: { id: user.id } }),
+      ]);
     }
 
     if (accessToken && process.env.AUTH_GITHUB_ID && process.env.AUTH_GITHUB_SECRET) {
@@ -39,7 +47,7 @@ export default async function Navbar() {
         ).toString("base64");
 
         await fetch(
-          `https://api.github.com/applications/${process.env.AUTH_GITHUB_ID}/grant`,
+          `${GITHUB_API_BASE}/applications/${process.env.AUTH_GITHUB_ID}/grant`,
           {
             method: "DELETE",
             headers: {

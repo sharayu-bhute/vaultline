@@ -27,10 +27,6 @@ export default function ReportActions({
     }
   }
 
-  function downloadPdf() {
-    window.print();
-  }
-
   return (
     <div className="flex items-center gap-3">
       <button
@@ -45,12 +41,13 @@ export default function ReportActions({
         {savingLoading ? "Saving…" : saved ? "Saved ✓" : "Save report"}
       </button>
 
-      <button
-        onClick={downloadPdf}
+      <a
+        href={`/api/scans/${scanId}/pdf`}
+        download
         className="px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors"
       >
         Download PDF
-      </button>
+      </a>
     </div>
   );
 }

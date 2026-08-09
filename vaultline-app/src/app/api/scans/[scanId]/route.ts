@@ -15,11 +15,15 @@ export async function GET(
 
   const scan = await prisma.scan.findUnique({
     where: { id: scanId },
-    include: { findings: true },
+    include: { findings: true, user: true },
   });
 
   if (!scan) {
     return NextResponse.json({ error: "Scan not found" }, { status: 404 });
+  }
+
+  if (scan.user?.email !== session.user.email) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   return NextResponse.json(scan);

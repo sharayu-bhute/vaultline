@@ -1,18 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { redactSecrets } from "@/lib/redact";
+import { auth } from "../../../../../../auth";
+import { GROQ_API_URL } from "@/lib/config";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ findingId: string }> }
 ) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
   const { findingId } = await params;
   const body = await req.json().catch(() => ({}));
   const force = body?.force === true;
 
-  const finding = await prisma.finding.findUnique({ where: { id: findingId } });
+  const finding = await prisma.finding.findUnique({
+    where: { id: findingId },
+    include: { scan: { include: { user: true } } },
+  });
   if (!finding) {
     return NextResponse.json({ error: "Finding not found" }, { status: 404 });
+  }
+  if (finding.scan.user?.email !== session.user.email) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   if (finding.suggestedFix && !force) {
@@ -22,7 +35,7 @@ export async function POST(
   const safeDescription = redactSecrets(finding.description);
 
   try {
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const response = await fetch(GROQ_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
