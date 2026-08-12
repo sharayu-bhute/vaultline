@@ -1,0 +1,55 @@
+name: Run Scan
+on:
+  workflow_dispatch:
+    inputs:
+      scan_id: { required: true, type: string }
+      repo_id: { required: true, type: string }
+      full_name: { required: true, type: string }
+      check_history: { required: true, type: string }
+      source_type: { required: true, type: string }
+      source_value: { required: true, type: string }
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: vaultline-app/worker
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install worker deps
+        working-directory: vaultline-app/worker
+        run: npm ci
+
+      - name: Run scan
+        working-directory: vaultline-app/worker
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SCANNER_IMAGE: ghcr.io/${{ github.repository_owner }}/vaultline-scanner:latest
+          CONTAINER_MEMORY: "1g"
+          CONTAINER_CPUS: "1"
+          CONTAINER_TIMEOUT_MS: "600000"
+        run: |
+          npx tsx src/scripts/runScanCli.ts \
+            --scanId "${{ inputs.scan_id }}" \
+            --repoId "${{ inputs.repo_id }}" \
+            --fullName "${{ inputs.full_name }}" \
+            --checkHistory "${{ inputs.check_history }}" \
+            --sourceType "${{ inputs.source_type }}" \
+            --sourceValue "${{ inputs.source_value }}"

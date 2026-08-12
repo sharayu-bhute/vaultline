@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getScanQueue } from "@/lib/queue";
+import { dispatchScanWorkflow } from "@/lib/githubDispatch";
 import { GITHUB_HOST } from "@/lib/config";
 import { auth } from "../../../../auth";
 
@@ -48,26 +48,15 @@ export async function POST(req: NextRequest) {
     data: { repoId: repo.id, status: "queued", userId: user?.id },
   });
 
-  const queue = getScanQueue();
-  const cloneUrl = `https://x-access-token:${accessToken}@${GITHUB_HOST}/${body.fullName}.git`;
+const cloneUrl = `https://x-access-token:${accessToken}@${GITHUB_HOST}/${body.fullName}.git`;
 
-  const job = await queue.add(
-    "scan",
-    {
-      scanId: scan.id,
-      repoId: repo.id,
-      fullName: body.fullName,
-      checkHistory: body.checkHistory ?? true,
-      source: { type: "git" as const, cloneUrl },
-    },
-    { removeOnComplete: true, removeOnFail: true }
-  );
+await dispatchScanWorkflow({
+  scanId: scan.id,
+  repoId: repo.id,
+  fullName: body.fullName,
+  checkHistory: body.checkHistory ?? true,
+  source: { type: "git", cloneUrl },
+});
 
-  const waitingCount = await queue.getWaitingCount();
-  await prisma.scan.update({
-    where: { id: scan.id },
-    data: { queuePosition: waitingCount },
-  });
-
-  return NextResponse.json({ scanId: scan.id, jobId: job.id, queuePosition: waitingCount });
+return NextResponse.json({ scanId: scan.id });
 }

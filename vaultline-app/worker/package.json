@@ -20,7 +20,7 @@
   "devDependencies": {
     "@types/adm-zip": "^0.5.8",
     "@types/node": "^20",
-    "tsx": "^4.19.2",
+    "tsx": "^4.23.12",
     "typescript": "^5"
   }
 }
