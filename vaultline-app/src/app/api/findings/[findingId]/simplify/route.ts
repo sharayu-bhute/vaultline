@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { redactSecrets } from "../../../../../../worker/src/redact";
+import { redactSecrets } from "@/lib/redact";
 import { auth } from "../../../../../../auth";
 import { GROQ_API_URL } from "@/lib/config";
 
