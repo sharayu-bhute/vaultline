@@ -1,6 +1,6 @@
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
-import { mkdtemp, rm, mkdir } from "node:fs/promises";
+import { mkdtemp, rm, mkdir, chmod } from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import AdmZip from "adm-zip";
@@ -23,6 +23,7 @@ async function prepareWorkspace(scanId: string) {
   const outputDir = path.join(base, "output");
   await mkdir(repoDir, { recursive: true });
   await mkdir(outputDir, { recursive: true });
+  await chmod(outputDir, 0o777);
 
   return {
     repoDir,
