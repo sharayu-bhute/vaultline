@@ -19,9 +19,6 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-        with:
-          sparse-checkout: vaultline-app/worker
-          sparse-checkout-cone-mode: false
 
       - uses: actions/setup-node@v4
         with:
@@ -32,6 +29,14 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install app deps and generate Prisma client
+        working-directory: vaultline-app
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          npm ci
+          npx prisma generate
 
       - name: Install worker deps
         working-directory: vaultline-app/worker
