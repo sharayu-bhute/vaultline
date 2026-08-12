@@ -73,3 +73,4 @@ await dispatchScanWorkflow({
 });
 
 return NextResponse.json({ scanId: scan.id });
+}
